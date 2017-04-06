@@ -1,0 +1,8 @@
+{
+    "content" : {
+        "S" : "<style>.biography-content {width: 60%;margin-left: auto;margin-right: auto;font-size: 1.2em;line-height: 2em;}.biography-content::selection{background: orange;color: white;}.biography-content p span {-webkit-animation: blink 0.8s ease infinite;animation: blink 0.8s ease infinite;}@keyframes blink{to {opacity: 0;}}</style><page-panel><page-body><div class=\"biography-content\"><blockquote>Learning by doing --John Dewey</blockquote><p>藉由實作來學習, 一直是我很喜歡的一句話! 在不斷的練習和學習之間, 逐漸發現程式設計的艱深和奧秘, 最初剛學物件導向的時候, 總以為函數就只是讓人閱讀方便, 或是簡化多次呼叫的流程, 可是近期閱讀過設計模式之後, 才深刻了解到函數設計模式的差別, 也發現到很多開源的專案都會使用特定的設計模式, 印象中最近看Google的PHP Client Beta, 其中又有使用 Adapter 模式, 其實又有些疑問, 設計模式和記憶體的分配之間要如何做取捨?!在前面幾項的專案中, 一直不太滿意也不斷的更新和改動, 近期加入了Notification的功能, 也希望以後能繼續學習.<span>|</span></p></div></page-body></page-panel>"
+    },
+    "title" : {
+        "S" : "自傳"
+    }
+}

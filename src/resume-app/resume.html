@@ -1,0 +1,365 @@
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/polymer/polymer.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/iron-icons/iron-icons.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/iron-icons/communication-icons.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/iron-icons/image-icons.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-button/paper-button.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-spinner/paper-spinner.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-card/paper-card.html">
+<link rel="import" href="sharestyles.html">
+
+<dom-module is="page-footer">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			.page-footing {
+				width: 100%;
+				font-size: 2em;
+				font-weight: 800;
+			}
+		</style>
+
+		<div class='page-footing'>
+			<content></content>
+		</div>
+	</template>
+</dom-module>
+
+<dom-module is="page-body">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			.page-bodying {
+				width: 100%;
+				height: 85%;
+				overflow-x: hidden !important;
+				overflow-y: initial !important;
+			}
+		</style>
+
+		<div class='page-bodying'>
+			<content></content>
+		</div>
+	</template>
+</dom-module>
+
+<dom-module is="page-header">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			.page-heading ::content {
+				width: 100%;
+				padding: 0 15px;
+				color: rgb(33, 97, 161);
+				text-align: left;
+				font-weight: 900;
+				box-sizing: border-box;
+			}
+		</style>
+
+		<div class='page-heading'>
+			<content></content>
+			<hr>
+		</div>
+	</template>
+</dom-module>
+
+<dom-module is="page-panel">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<content></content>
+	</template>
+</dom-module>
+
+<dom-module id="resume-page">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+		:host {
+			width: 100%;
+			height: 100%;
+			padding: 1em;
+			margin: 0;
+			display: inline-block;
+			position: relative;
+			box-sizing: border-box;
+		}
+		</style>
+		<content></content>
+	</template>
+</dom-module>
+
+<dom-module id="page-work">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<style>
+			.works-header {
+				padding: 10px;
+				font-size: 1.5em;
+				font-weight: 900;
+			}
+			.works-body {
+				height: 150px;
+				padding: 10px;
+				font-size: 1em;
+				overflow-x: hidden;
+				overflow-y: initial; 
+			}
+			paper-card.blue .works-header {
+				color: #fff;
+				background-color: blue;
+			}
+			paper-card.red .works-header {
+				color: #fff;
+				background-color: red;
+			}
+			paper-card.purple .works-header {
+				color: #fff;
+				background-color: purple;
+			}
+			paper-card.orange .works-header {
+				color: #fff;
+				background-color: orange;
+			}
+			paper-card.green .works-header {
+				color: #fff;
+				background-color: green;
+			}
+			paper-card.yellow .works-header {
+				color: #fff;
+				background-color: yellow;
+			}
+		</style>
+		<template is="dom-repeat" items="[[works]]">
+			<paper-card class$="[[item.M.class.S]]">
+				<div class="card-content">
+					<div class="works-header">
+						<h4 class="works-heading">[[item.M.title.S]]</h4>
+					</div>
+					<div class="works-body">
+						<div class="works-bodying">
+							<p>[[item.M.content.S]]</p>
+						</div>
+					</div>
+				</div>
+				<div class="card-actions">
+					<paper-button class="default" raised>
+						<a href$="[[item.M.link.S]]" target="_blank">link</a>
+					</paper-button>
+				</div>
+			</paper-card>
+		</template>
+	</template>
+</dom-module>
+
+<dom-module id="page-works">
+	<template>
+		<style is="custom-style" include="shared-styles"></style>
+		<page-panel>
+			<page-body>
+			</page-body>
+		</page-panel>
+	</template>
+</dom-module>
+
+<dom-module id="page-main">
+	<template>
+		<style>
+			.top-bar {
+				width: 100%;
+				height: 90px;
+				background: #fff;
+				text-align: center;
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 4;
+			}
+
+			.top-bar .title, .top-bar ul a {
+				color: rgb(33, 97, 161);
+				font-weight: 900;
+				text-decoration: none;
+			}
+
+			.top-bar ul {
+				padding: 0;
+				color: rgb(33, 97, 161);
+				list-style: none;
+				position: fixed;
+				top: 0;
+				right: 0;
+			}
+
+			.top-bar ul li {
+				margin: 5px;
+				padding: 5px;
+				display: inline-block;
+				position: relative;
+				box-sizing: border-box;
+			}
+
+			.top-bar ul a {
+				padding: 5px 10px;
+				display: block;
+			}
+
+			.top-bar ul a:hover {
+				background: rgb(53, 117, 181);
+				color: #fff;
+				cursor: pointer;
+			}
+
+			.top-bar ul a[active] {
+				background: rgb(33, 97, 161);
+				color: #fff;
+			}
+
+			#prevbtn, #nextbtn {
+				width: 60px;
+				height: 60px;
+				color: rgb(33, 97, 161);
+				position: fixed;
+				--paper-icon-button-ink-color: rgb(53, 117, 181);
+				z-index: 4;
+			}
+			
+			#prevbtn[disabled], #nextbtn[disabled] {
+				color: #e3e3e3;
+				pointer-events: none;
+			}
+
+			#prevbtn {
+				top: 50%;
+				left: 5px;
+			}
+
+			#nextbtn {
+				top: 50%;
+				right: 5px;
+			}
+
+			#prevbtn:hover, #nextbtn:hover {
+				color: rgb(13, 77, 141);
+			}
+
+			#page {
+				height: 600px;
+				position: absolute;				
+				top: 90px;
+				left: 0;
+				-webkit-transition: 2s left ease-in-out;
+				transition: 2s left ease-in-out;
+				z-index: 3;
+			}
+
+			.animation {
+				animation-duration: 1s;
+				animation-timing-function: ease-in-out;
+			}
+
+			.rotate {
+				animation-name: rot;
+			}
+
+			.scale {
+				animation-name: sca;
+			}
+
+			@keyframes rot {
+				10% {
+					transform: rotateX(0);
+				}
+				20% {
+					transform: rotateX(180deg);
+				}
+				50% {
+					transform: rotateX(360deg);
+				}
+				80% {
+					transform: rotateX(180deg);
+				}
+				100% {
+					transform: rotateX(0);
+				}
+			}
+		</style>
+		<div id="content">
+			<page-loading></page-loading>
+			<div class="top-bar">
+				<page-header>
+					<h1>[[_getPageInfoName(pageNow)]]</h1>
+				</page-header>
+				<ul id="menu">
+					<template is="dom-repeat" items="[[pageConf.pageInfo]]">
+						<li>
+							<a id="item[[item.id]]" href$="#" data-item$="[[item.id]]" on-tap="_setPage">[[item.name]]</a>
+						</li>
+					</template>
+				</ul>
+			</div>
+			<div id="page">
+				<content></content>
+			</div>
+			<paper-icon-button id="prevbtn" icon="image:navigate-before" alt="上一頁[[_getPageInfoName(pagePrev)]]"></paper-icon-button>
+			<paper-tooltip for="prevbtn" position="right" offset="0">上一頁[[_getPageInfoName(pagePrev)]]</paper-tooltip>
+			<paper-icon-button id="nextbtn" icon="image:navigate-next" alt="下一頁[[_getPageInfoName(pageNext)]]" ></paper-icon-button>
+			<paper-tooltip for="nextbtn" position="left" offset="0">下一頁[[_getPageInfoName(pageNext)]]</paper-tooltip>
+		</div>
+	</template>
+</dom-module>
+
+<dom-module id="page-loading">
+	<template>
+		<style>
+		:host {
+			width: 100%;
+			height: 100%;
+			background: rgba(210, 210, 210, 0.8);
+			margin: 0;
+			padding: 0;
+			position: fixed;
+			top: 0;
+			left: 0;
+			display: -webkit-flex;
+    		-webkit-flex-flow: row nowrap;
+    		display: flex;
+    		flex-flow: row nowrap;
+    		justify-content: center;
+    		align-content: center;
+    		align-items: center;
+			z-index: 5;
+		}
+		
+		:host.hidden {
+			display: none !important;
+		}
+
+		.loading-str {
+			border: 1px black solid;
+			margin: 8px;
+			-webkit-animation: loadingstr 1s ease-in-out;
+			animation: loadingstr 1s ease-in-out;
+		}
+
+		#spinner {
+			-webkit-flex: 0 0 auto;
+   			 flex: 0 0 auto;
+		}
+
+		@keyframes loadingstr {
+			form {
+				transform: rotateZ(0);
+			}
+			to {
+				transform: rotateZ(360deg);
+			}
+		}
+		</style>
+		<paper-spinner id="spinner" alt="Loading resume page!" active="{{!hidden}}" hidden="{{hidden}}"></paper-spinner>
+		<span class="loading-str" style="-webkit-animation-delay:0;animation-delay:0;">讀</span>
+		<span class="loading-str" style="-webkit-animation-delay:1s;animation-delay:1s;">取</span>
+		<span class="loading-str" style="-webkit-animation-delay:2s;animation-delay:2s;">中</span>
+	</template>
+</dom-module>

@@ -1,0 +1,498 @@
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/polymer/polymer.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/iron-icons/iron-icons.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/iron-icons/communication-icons.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/iron-icons/image-icons.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-button/paper-button.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-spinner/paper-spinner.html">
+<link rel="import" href="//cdn.rawgit.com/download/polymer-cdn/1.2.3.2/lib/paper-card/paper-card.html">
+<link rel="import" href="sharestyles.html">
+<link rel="import" href="resume-page.html">
+<link rel="import" href="page-panel.html">
+<link rel="import" href="page-header.html">
+<link rel="import" href="page-body.html">
+<link rel="import" href="page-footer.html">
+<link rel="import" href="page-loading.html">
+
+<dom-module id="page-work">
+  <template>
+    <style is="custom-style" include="shared-styles"></style>
+    <style>
+      .works-header {
+        padding: 10px;
+        font-size: 1.5em;
+        font-weight: 900;
+      }
+      .works-body {
+        height: 150px;
+        padding: 10px;
+        font-size: 1em;
+        overflow-x: hidden;
+        overflow-y: initial; 
+      }
+      paper-card.blue .works-header {
+        color: #fff;
+        background-color: blue;
+      }
+      paper-card.red .works-header {
+        color: #fff;
+        background-color: red;
+      }
+      paper-card.purple .works-header {
+        color: #fff;
+        background-color: purple;
+      }
+      paper-card.orange .works-header {
+        color: #fff;
+        background-color: orange;
+      }
+      paper-card.green .works-header {
+        color: #fff;
+        background-color: green;
+      }
+      paper-card.yellow .works-header {
+        color: #fff;
+        background-color: yellow;
+      }
+    </style>
+    <template is="dom-repeat" items="[[works]]">
+      <paper-card class$="[[item.M.class.S]]">
+        <div class="card-content">
+          <div class="works-header">
+            <h4 class="works-heading">[[item.M.title.S]]</h4>
+          </div>
+          <div class="works-body">
+            <div class="works-bodying">
+              <p>[[item.M.content.S]]</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <paper-button class="default" raised>
+            <a href$="[[item.M.link.S]]" target="_blank">link</a>
+          </paper-button>
+        </div>
+      </paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-work',
+      properties: {
+        works: {
+          type: Array,
+        }
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="page-works">
+  <template>
+    <style is="custom-style" include="shared-styles"></style>
+    <page-panel>
+      <page-body>
+      </page-body>
+    </page-panel>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-works',
+      properties: {
+        works: {
+          type: Array,
+          notify: false,
+          reflectToAttribute: false,
+          value: function () {
+            return [];
+          },
+          observer: '_worksChange'
+        }
+      },
+      created: function () {
+        var self = this;
+
+        superagent.get('/src/json/works.json').end(function (err, res) {
+          if (err) {
+            console.log(err);
+          } else {
+            self.works = res.body;
+          }
+        });
+      },
+      _worksChange: function (works) {
+        if (works[0] !== undefined) {
+          var el = Polymer.Base.create('page-work');
+
+          el.works = works;
+          Polymer.dom(Polymer.dom(this).node.children[0].children[0]).appendChild(el);
+        }
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="resume-app">
+  <template>
+    <style>
+      .top-bar {
+        width: 100%;
+        height: 90px;
+        background: #fff;
+        text-align: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 4;
+      }
+
+      .top-bar .title, .top-bar ul a {
+        color: rgb(33, 97, 161);
+        font-weight: 900;
+        text-decoration: none;
+      }
+
+      .top-bar ul {
+        padding: 0;
+        color: rgb(33, 97, 161);
+        list-style: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+      }
+
+      .top-bar ul li {
+        margin: 5px;
+        padding: 5px;
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+      }
+
+      .top-bar ul a {
+        padding: 5px 10px;
+        display: block;
+      }
+
+      .top-bar ul a:hover {
+        background: rgb(53, 117, 181);
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .top-bar ul a[active] {
+        background: rgb(33, 97, 161);
+        color: #fff;
+      }
+
+      #prevbtn, #nextbtn {
+        width: 60px;
+        height: 60px;
+        color: rgb(33, 97, 161);
+        position: fixed;
+        --paper-icon-button-ink-color: rgb(53, 117, 181);
+        z-index: 4;
+      }
+      
+      #prevbtn[disabled], #nextbtn[disabled] {
+        color: #e3e3e3;
+        pointer-events: none;
+      }
+
+      #prevbtn {
+        top: 50%;
+        left: 5px;
+      }
+
+      #nextbtn {
+        top: 50%;
+        right: 5px;
+      }
+
+      #prevbtn:hover, #nextbtn:hover {
+        color: rgb(13, 77, 141);
+      }
+
+      #page {
+        height: 600px;
+        position: absolute;       
+        top: 90px;
+        left: 0;
+        -webkit-transition: 2s left ease-in-out;
+        transition: 2s left ease-in-out;
+        z-index: 3;
+      }
+
+      .animation {
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
+      }
+
+      .rotate {
+        animation-name: rot;
+      }
+
+      .scale {
+        animation-name: sca;
+      }
+
+      @keyframes rot {
+        10% {
+          transform: rotateX(0);
+        }
+        20% {
+          transform: rotateX(180deg);
+        }
+        50% {
+          transform: rotateX(360deg);
+        }
+        80% {
+          transform: rotateX(180deg);
+        }
+        100% {
+          transform: rotateX(0);
+        }
+      }
+    </style>
+
+    <div id="content">
+      <page-loading></page-loading>
+      <div class="top-bar">
+        <page-header>
+          <h1>[[_getPageInfoName(pageNow)]]</h1>
+        </page-header>
+        <ul id="menu">
+          <template is="dom-repeat" items="[[pageConf.pageInfo]]">
+            <li>
+              <a id="item[[item.id]]" href$="#" data-item$="[[item.id]]" on-tap="_setPage">[[item.name]]</a>
+            </li>
+          </template>
+        </ul>
+      </div>
+      <div id="page">
+        <content></content>
+      </div>
+      <paper-icon-button id="prevbtn" icon="image:navigate-before" alt="上一頁[[_getPageInfoName(pagePrev)]]"></paper-icon-button>
+      <paper-tooltip for="prevbtn" position="right" offset="0">上一頁[[_getPageInfoName(pagePrev)]]</paper-tooltip>
+      <paper-icon-button id="nextbtn" icon="image:navigate-next" alt="下一頁[[_getPageInfoName(pageNext)]]" ></paper-icon-button>
+      <paper-tooltip for="nextbtn" position="left" offset="0">下一頁[[_getPageInfoName(pageNext)]]</paper-tooltip>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'resume-app',
+
+      properties: {
+        pageConf: {
+          type: Object,
+          reflectToAttribute: false,
+        },
+        pageNow: {
+          type: Number,
+          reflectToAttribute: false,
+          observer: '_pageNowChange',
+        },
+        pagePrev: {
+          type: Number,
+          reflectToAttribute: false,
+        },
+        pageNext: {
+          type: Number,
+          reflectToAttribute: false,
+        },
+        pageData: {
+          type: Array,
+          reflectToAttribute: false,
+          value: function () {
+            return [];
+          }
+        },
+        pageRendered: {
+          type: Array,
+          reflectToAttribute: false,
+          value: function () {
+            return [];
+          }
+        },
+        totalPage: {
+          type: Number,
+        },
+        hidden: {
+          type: Boolean,
+          value: false,
+          notify: false,
+          observer: '_hiddenChange',
+        },
+        version: {
+          type: String,
+          reflectToAttribute: false,
+        },
+      },
+      created: function () {
+        var w = window;
+        var r = 'ga';
+
+        w['GoogleAnalyticsObject']=r;
+        w[r] = w[r]||function(){
+          (w[r].q=w[r].q||[]).push(arguments)
+          };
+        w[r].l = 1*new Date();
+
+        ga('create', 'UA-75655214-2', 'auto');
+      },
+      attached: function () {
+        var callback = function (err, res) {
+          if (err) {
+            console.warn(err);
+          } else {
+            var pr = Polymer.dom(this);
+
+            this.pageConf = res.body;
+            this.totalPage = res.body.totalPage;
+            this.version = res.body.version;
+
+            for (var i=1; i<=this.totalPage; i++) {
+              var el = Polymer.Base.create('resume-page');
+
+              el.id = 'page'+(i);
+              el.style.width = ((1/this.totalPage)*100) + '%';
+              pr.appendChild(el);
+            }
+
+            var messageLength = res.body.consoleMessages.length;
+
+            for (var i=0; i<messageLength; i++) {
+              console.log('%c%s', res.body.consoleMessages[i].style, res.body.consoleMessages[i].message)
+            }
+            this.$.page.style.width = (this.totalPage*100) + '%';
+            this.pageNext = this._getNextPage();
+            this.pagePrev = this._getPrevPage();
+            this.pageNow = this.loadId();
+          }
+        };
+
+        superagent.get('/src/json/config.json').end(callback.bind(this));
+      },
+      listeners: {
+        'prevbtn.tap': 'prevPage',
+        'nextbtn.tap': 'nextPage',
+      },
+      checkId: function (id) {
+        return ((id <= this.totalPage) && (id > 0));
+      },
+      saveId: function (id) {
+        if (window.hasOwnProperty('localStorage')) {
+          localStorage.setItem('id', id);
+          return true;
+        }
+        return false;
+      },
+      loadId: function () {
+        if (window.hasOwnProperty('localStorage')) {
+          return localStorage.getItem('id') || 1;
+        }
+        return 1;
+      },
+      _pageNowChange: function (id) {
+        if (id > 0) {
+          this.$.page.style.left = (parseInt(this.pageNow, 10)-1)*(-100) + '%';
+          this._setPageContent(id);
+          this.pageNext = this._getNextPage();
+          this.pagePrev = this._getPrevPage();
+          this.saveId(id);
+        }
+      },
+      _hiddenChange: function (isHidden) {
+        Polymer.dom(this.$.content).querySelector('page-loading').querySelector('#spinner')._notifyPath('hidden', isHidden, false);
+      },
+      _getNextPage: function () {
+        if (this.pageNow < this.totalPage) {
+          return parseInt(this.pageNow, 10)+1;
+        } else {
+          return 1;
+        }
+      },
+      _getPrevPage: function () {
+        if ((this.pageNow) > 1) {
+          return parseInt(this.pageNow, 10)-1;
+        } else {
+          return this.totalPage;
+        }
+      },
+      _getPageInfoName: function (id) {
+        return this.get('name', this.pageConf.pageInfo[id-1]);
+      },
+      _getPageContent: function (pid) {
+        var callback = function (err, res) {
+          if (err) {
+            console.log(err);
+          } else {
+            this.pageData[this.pageNow] = res.body;
+            this._setPageContent(this.pageNow);
+            this.hidden = true;
+          }
+        };
+
+        this.hidden = false;
+
+        superagent.get('/resume/json/page' + pid + '.json').end(callback.bind(this));
+      },
+      _setPage: function (e) {
+        e.preventDefault();
+        this.removeActive(this.pageNow);
+        this.pageNow = e.target.dataset.item;
+        this.setActive(this.pageNow);
+        ga('send', 'event', 'link', 'get', e.target.textContent);
+      },
+      _setPageContent: function (id) {
+        if (!this.checkId(id)) {
+          this.pageNow = 1;
+          return;
+        }
+
+        if (this.pageData[id] !== undefined) {
+          document.querySelector('title').textContent = this.pageData[id]['title']['S'];
+          if (!this.pageRendered[id]) {
+            Polymer.dom(this).querySelector('#page'+id).innerHTML = this.pageData[id]['content']['S'];
+            this.pageRendered[id] = true;
+          }
+          ga('set', {
+            page: document.querySelector('title').textContent,
+            title: document.querySelector('title').textContent,
+            location: location.pathname
+          });
+          ga('send', 'pageview');
+          this.setActive(id);
+        } else {
+          this._getPageContent(id);
+        }
+      },
+      _isActive: function (page) {
+        return (this.pageNow === page);
+      },
+      setActive: function (id) {
+        this.$.menu.querySelector('#item'+id).setAttribute('active', true);
+      },
+      removeActive: function (id) {
+        this.$.menu.querySelector('#item'+id).removeAttribute('active');
+      },
+      nextPage: function (e) {
+        this.removeActive(this.pageNow);
+        this.pageNow = this._getNextPage();
+        this.setActive(this.pageNow);
+        ga('send', 'event', 'link', 'get', 'nextPage');     
+      },
+      prevPage: function (e) {
+        this.removeActive(this.pageNow);
+        this.pageNow = this._getPrevPage();
+        this.setActive(this.pageNow);
+        ga('send', 'event', 'link', 'get', 'prevPage');
+      }
+    });
+  </script>
+</dom-module>

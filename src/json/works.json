@@ -1,0 +1,91 @@
+[{
+	"M" : {
+	    "class" : {
+	        "S" : "works blue"
+	    },
+	    "content" : {
+	        "S" : "使用plugin, 前端: jQuery, 後端: 無    負責事項: 協助CSS調整還有JS客戶端功能實踐, 後端PHP樣板功能實踐"
+	    },
+	    "link" : {
+	        "S" : "http://www.scu.edu.tw/ba/SUBA-ALRT2015/"
+	    },
+	    "title" : {
+	        "S" : "研討會網站"
+	    }
+	}
+}, {
+	"M" : {
+		"class" : {
+		    "S" : "works red"
+		},
+		"content" : {
+		    "S" : "使用plugin, 前端: vuejs, bootstrap, flatUI; 後端: Yii framework    負責事項: 最初-後台功能(CMS)及資料庫的建置 目前-網站改版及串接金流"
+		},
+		"link" : {
+		    "S" : "https://www.suba.org.tw"
+		},
+		"title" : {
+		    "S" : "財團法人東吳企管文教基金會"
+		}
+	}
+}, {
+	"M" : {
+		"class" : {
+		    "S" : "works purple"
+		},
+		"content" : {
+		    "S" : "使用plugin, 前端: jQuery, bootstrap; 後端: Yii framework    負責事項: 整個網站的規劃, 銀行金流串接, 後台系統及報名系統架設"
+		},
+		"link" : {
+		    "S" : "https://dalab.ie.nthu.edu.tw/ISMI2016/"
+		},
+		"title" : {
+		    "S" : "ISMI2016研討會網站"
+		}
+	}
+}, {
+	"M" : {
+		"class" : {
+		    "S" : "works orange"
+		}, 
+		"content" : {
+		    "S" : "使用animation api 及物件導向設計達成跑馬燈效果(pure JS)"
+		}, 
+		"link" : {
+		    "S" : "https://github.com/sc0Vu/marquee"
+		}, 
+		"title" : {
+		    "S" : "marquee js"
+		}
+	}
+}, {
+	"M" : {
+		"class" : {
+		    "S" : "works green"
+		}, 
+		"content" : {
+		    "S" : "Yii extension 實踐 google recaptcha 功能"
+		}, 
+		"link" : {
+		    "S" : "https://github.com/sc0Vu/yii-grecaptcha"
+		}, 
+		"title" : {
+		    "S" : "yii-grecaptcha"
+		}
+	}
+}, {
+	"M" : {
+		"class" : {
+		    "S" : "works blue"
+		},
+		"content" : {
+		    "S" : "Yii extension 實踐 google chart 功能"
+		},
+		"link" : {
+		    "S" : "https://github.com/sc0Vu/yii-gchart"
+		},
+		"title" : {
+		    "S" : "yii-gchart" 
+		}
+	}  
+}]

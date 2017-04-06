@@ -1,0 +1,72 @@
+<dom-module id="page-loading">
+  <template>
+    <style>
+    :host {
+      width: 100%;
+      height: 100%;
+      background: rgba(210, 210, 210, 0.8);
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: -webkit-flex;
+        -webkit-flex-flow: row nowrap;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+      z-index: 5;
+    }
+    
+    :host.hidden {
+      display: none !important;
+    }
+
+    .loading-str {
+      border: 1px black solid;
+      margin: 8px;
+      -webkit-animation: loadingstr 1s ease-in-out;
+      animation: loadingstr 1s ease-in-out;
+    }
+
+    #spinner {
+      -webkit-flex: 0 0 auto;
+         flex: 0 0 auto;
+    }
+
+    @keyframes loadingstr {
+      form {
+        transform: rotateZ(0);
+      }
+      to {
+        transform: rotateZ(360deg);
+      }
+    }
+    </style>
+    <paper-spinner id="spinner" alt="Loading resume page!" active="{{!hidden}}" hidden="{{hidden}}"></paper-spinner>
+    <span class="loading-str" style="-webkit-animation-delay:0;animation-delay:0;">讀</span>
+    <span class="loading-str" style="-webkit-animation-delay:1s;animation-delay:1s;">取</span>
+    <span class="loading-str" style="-webkit-animation-delay:2s;animation-delay:2s;">中</span>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-loading',
+      properties: {
+        hidden: {
+          type: Boolean,
+          value: true,
+          notify: true,
+        }
+      },
+      listeners: {
+        'hidden-changed': 'hiddenChange',
+      },
+      hiddenChange: function (e) {
+        this.classList.toggle('hidden', e.detail.value);
+      }
+    });
+  </script>
+</dom-module>

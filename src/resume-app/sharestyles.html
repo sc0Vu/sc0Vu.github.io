@@ -1,0 +1,162 @@
+<dom-module is="shared-styles">
+<template>
+	<style>
+	@media screen and (max-width:768px) {
+		::content .panel {
+			width: 94% !important;
+		}
+
+		::content .col-5 {
+			width: 100% !important;
+			height: auto !important;
+			padding: 0 !important;
+		}
+
+		::content .col-5 {
+			text-align: center;
+		}
+
+		::content .col-5 img {
+			width: 30% !important;
+		}
+
+		::content .col-5 ul {
+			width: 300px !important;
+			margin: 15px auto !important;
+			padding: 0 !important;
+		}
+
+		::content .col-5 li {
+		    padding:1% 2% !important;
+		}
+
+		::content blockquote{
+			font-size: 1em !important;
+		}
+
+		paper-card.works {
+			width: 90% !important;
+		}
+	}
+
+	@media screen and (min-width: 769px) and (max-width:1300px) {
+		paper-card.works {
+			width: 39% !important;
+		}
+	}
+
+	::content .col-5 img {
+		width: 50%;
+		height: auto;
+	}
+
+	::content blockquote {
+		width: 100%;
+		padding: 1.5em 1em;
+		margin: 0 auto;
+		background: #fefefe;
+		border-left: 0.9em #ddd solid;
+		font-size: 1.5em;
+		text-align: left;
+		font-style: italic;
+		box-sizing: border-box;
+	}
+
+	::content .section {
+		text-align: center;
+	}
+
+	::content .panel {
+		width: 60%;
+		height: 90%;
+		margin: 15% auto 0 auto;
+	}
+
+	::content .panel .panel-body {
+		height: 90%;
+	}
+	::content .col-5 {
+		width: 48%;
+		padding: 3% 1%;
+		text-align: center;
+		float: left;
+	}
+	::content .col-5 ul {
+		list-style: none;
+	}
+	::content .col-5 li {
+		width: 90%;
+		padding: 2% 5%;
+		margin-top: 3%;
+		text-align: left;
+	}
+	::content .panel .panel-body p.desc {
+		min-height: 30%;
+		padding: 2em;
+		font-size: 1em;
+		line-height: 2em;
+		text-align: left;
+		background: #BBFFBB;
+		border: 1px #99FF99 solid;
+		border-radius: 5px;
+	}
+	::content .panel .panel-body p.content {
+		padding: 2em;
+		font-size: 1em;
+		line-height: 2em;
+		text-align: justify;
+		border: 1px #9999FF solid;
+		border-radius: 5px;
+		background: #BBBBFF;
+	}
+	::content .panel-header h1 {
+		font-size: 1.6em;
+	}
+	.center {
+		text-align: center;
+	}
+	paper-button.default a {
+		width: 100%;
+		height: 100%;
+		display: block;
+		color: white;
+		text-decoration: none;
+	}
+	paper-button.default {
+		color: white;
+		background-color: rgb(33, 97, 161);
+		--paper-button-ink-color : rgb(53, 117, 181);
+		--paper-button-disabled {
+			color: white;
+			background-color: rgb(93, 157, 221);
+		}
+		--paper-button-flat-keyboard-focus {
+			color: white !important;
+			font-weight: 900;
+		}
+		--paper-button-raised-keyboard-focus {
+			color: white !important;
+			font-weight: 900;
+		}
+	}
+	paper-button.dafault:hover {
+		color: white !important;
+		background-color: rgb(93, 157, 221) !important;
+	}
+	paper-button.default:focus {
+		color: white !important;
+		background-color: rgb(93, 157, 221);
+		font-weight: 900;
+	}
+
+	paper-card.works {
+		width: 22%;
+		margin: 15px 5%;
+	}
+
+	paper-card.works .card-content {
+		padding: 0 !important;
+	}
+	</style>
+</template>
+</dom-module>

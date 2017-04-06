@@ -1,0 +1,27 @@
+{
+	"version":"0.1",
+	"createDate":"20160322",
+	"lastModifiedDate":"20160411",
+	"author":"PeterLai",
+	"totalPage":4,
+	"pageInfo":[{
+		"id":1,
+		"name":"簡介"
+	}, {
+		"id":2,
+		"name":"作品"
+	}, {
+		"id":3,
+		"name":"自傳"
+	}, {
+		"id":4,
+		"name":"版權"
+	}],
+	"consoleMessages":[{
+		"style": "color: blue; font-size:72px;",
+		"message": "Hi! Nice to meet you:!"
+	}, {
+		"style": "color: blue; font-size:36px;",
+		"message": "If you have any question, you can mail me!"
+	}]
+}

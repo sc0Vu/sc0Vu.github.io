@@ -1,0 +1,23 @@
+<dom-module is="page-body">
+  <template>
+    <style is="custom-style" include="shared-styles"></style>
+    <style>
+      .page-bodying {
+        width: 100%;
+        height: 85%;
+        overflow-x: hidden !important;
+        overflow-y: initial !important;
+      }
+    </style>
+
+    <div class='page-bodying'>
+      <content></content>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-body'
+    });
+  </script>
+</dom-module>

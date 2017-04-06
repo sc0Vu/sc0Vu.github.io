@@ -1,0 +1,26 @@
+<dom-module is="page-header">
+  <template>
+    <style is="custom-style" include="shared-styles"></style>
+    <style>
+      .page-heading ::content {
+        width: 100%;
+        padding: 0 15px;
+        color: rgb(33, 97, 161);
+        text-align: left;
+        font-weight: 900;
+        box-sizing: border-box;
+      }
+    </style>
+
+    <div class='page-heading'>
+      <content></content>
+      <hr>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-header'
+    });
+  </script>
+</dom-module>

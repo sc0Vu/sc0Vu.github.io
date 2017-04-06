@@ -1,0 +1,8 @@
+{
+    "content" : {
+        "S" : "<page-panel><page-body><div class=\"col-5\"><img src=\"https://s3-ap-northeast-1.amazonaws.com/bonweb-assets/images/profile.jpg\" alt=\"Profile\"></div><div class=\"col-5\"><ul><li id=\"intro-name\">姓名: 賴冠呈<paper-tooltip for=\"intro-name\" offset=\"0\" position=\"left\">Kuan-Chen, Lai</paper-tooltip></li><li>就讀學校: 東吳大學企管系</li><li>Email:<a class=\"email\" href=\"mailto:alk03073135@gmail.com\" tabindex=\"-1\"><paper-icon-button id=\"btn-email\" alt=\"email\" icon=\"communication:email\"></paper-icon-button></a><paper-tooltip for=\"btn-email\" offset=\"0\">Send email</paper-tooltip></li><li>Skill: HTML, CSS, Javascript, PHP, Redis, Web App, Apache, Nginx, AWS, GCP, HTTP2, Docker</li><li>部落格:<a class=\"blog\" href=\"http://blog.ptrgl.com\" tabindex=\"-1\"><paper-icon-button id=\"btn-blog\" alt=\"blog\" icon=\"favorite\"></paper-icon-button></a><paper-tooltip for=\"btn-email\" offset=\"0\">Send email</paper-tooltip></li></ul></div></page-body></page-panel>"
+    },
+    "title" : {
+        "S" : "簡介"
+    }
+}
