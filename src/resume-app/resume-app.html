@@ -440,7 +440,7 @@
 
         this.hidden = false;
 
-        superagent.get('/resume/json/page' + pid + '.json').end(callback.bind(this));
+        superagent.get('/src/json/page' + pid + '.json').end(callback.bind(this));
       },
       _setPage: function (e) {
         e.preventDefault();
