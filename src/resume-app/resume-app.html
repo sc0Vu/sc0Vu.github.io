@@ -332,10 +332,68 @@
           type: String,
           reflectToAttribute: false,
         },
+        worker: {
+          type: Object,
+          reflectToAttribute: false,
+        },
       },
       created: function () {
         var w = window;
         var r = 'ga';
+
+        if (w.hasOwnProperty('Worker') && w.hasOwnProperty('fetch')) {
+          var worker = new Worker('/src/worker.js');
+          var messageCallback = function (msg) {
+            var msgData = msg.data;
+
+            switch (msgData.key) {
+              case 'config':
+              var pr = Polymer.dom(this);
+              var data = JSON.parse(msgData.data);
+
+              this.pageConf = data;
+              this.totalPage = data.totalPage;
+              this.version = data.version;
+
+              for (var i=1; i<=this.totalPage; i++) {
+                var el = Polymer.Base.create('resume-page');
+
+                el.id = 'page'+(i);
+                el.style.width = ((1/this.totalPage)*100) + '%';
+                pr.appendChild(el);
+              }
+
+              var messageLength = data.consoleMessages.length;
+
+              for (var i=0; i<messageLength; i++) {
+                console.log('%c%s', data.consoleMessages[i].style, data.consoleMessages[i].message)
+              }
+              this.$.page.style.width = (this.totalPage*100) + '%';
+              this.pageNext = this._getNextPage();
+              this.pagePrev = this._getPrevPage();
+              this.pageNow = this.loadId();
+              break;
+              case 'page' + this.pageNow:
+              var data = JSON.parse(msgData.data);
+
+              this.pageData[this.pageNow] = data;
+              this._setPageContent(this.pageNow);
+              this.hidden = true;
+              default:
+              break;
+            }
+          };
+
+          var errorCallback = function (error) {
+            console.warn('Something wrong happened!');
+          };
+
+          worker.onmessage = messageCallback.bind(this);
+
+          worker.onerror = errorCallback.bind(this);
+
+          this.worker = worker;
+        }
 
         w['GoogleAnalyticsObject']=r;
         w[r] = w[r]||function(){
@@ -346,37 +404,44 @@
         ga('create', 'UA-75655214-2', 'auto');
       },
       attached: function () {
-        var callback = function (err, res) {
-          if (err) {
-            console.warn(err);
-          } else {
-            var pr = Polymer.dom(this);
+        if (this.worker) {
+          this.worker.postMessage({
+            key: 'config',
+            url: '/src/json/config.json'
+          });
+        } else {
+          var callback = function (err, res) {
+            if (err) {
+              console.warn(err);
+            } else {
+              var pr = Polymer.dom(this);
 
-            this.pageConf = res.body;
-            this.totalPage = res.body.totalPage;
-            this.version = res.body.version;
+              this.pageConf = res.body;
+              this.totalPage = res.body.totalPage;
+              this.version = res.body.version;
 
-            for (var i=1; i<=this.totalPage; i++) {
-              var el = Polymer.Base.create('resume-page');
+              for (var i=1; i<=this.totalPage; i++) {
+                var el = Polymer.Base.create('resume-page');
 
-              el.id = 'page'+(i);
-              el.style.width = ((1/this.totalPage)*100) + '%';
-              pr.appendChild(el);
+                el.id = 'page'+(i);
+                el.style.width = ((1/this.totalPage)*100) + '%';
+                pr.appendChild(el);
+              }
+
+              var messageLength = res.body.consoleMessages.length;
+
+              for (var i=0; i<messageLength; i++) {
+                console.log('%c%s', res.body.consoleMessages[i].style, res.body.consoleMessages[i].message)
+              }
+              this.$.page.style.width = (this.totalPage*100) + '%';
+              this.pageNext = this._getNextPage();
+              this.pagePrev = this._getPrevPage();
+              this.pageNow = this.loadId();
             }
+          };
 
-            var messageLength = res.body.consoleMessages.length;
-
-            for (var i=0; i<messageLength; i++) {
-              console.log('%c%s', res.body.consoleMessages[i].style, res.body.consoleMessages[i].message)
-            }
-            this.$.page.style.width = (this.totalPage*100) + '%';
-            this.pageNext = this._getNextPage();
-            this.pagePrev = this._getPrevPage();
-            this.pageNow = this.loadId();
-          }
-        };
-
-        superagent.get('/src/json/config.json').end(callback.bind(this));
+          superagent.get('/src/json/config.json').end(callback.bind(this));
+        }
       },
       listeners: {
         'prevbtn.tap': 'prevPage',
@@ -428,19 +493,26 @@
         return this.get('name', this.pageConf.pageInfo[id-1]);
       },
       _getPageContent: function (pid) {
-        var callback = function (err, res) {
-          if (err) {
-            console.log(err);
-          } else {
-            this.pageData[this.pageNow] = res.body;
-            this._setPageContent(this.pageNow);
-            this.hidden = true;
-          }
-        };
+        if (this.worker) {
+          this.worker.postMessage({
+            key: 'page' + pid,
+            url: '/src/json/page' + pid + '.json'
+          });
+        } else {
+          var callback = function (err, res) {
+            if (err) {
+              console.log(err);
+            } else {
+              this.pageData[this.pageNow] = res.body;
+              this._setPageContent(this.pageNow);
+              this.hidden = true;
+            }
+          };
 
-        this.hidden = false;
+          this.hidden = false;
 
-        superagent.get('/src/json/page' + pid + '.json').end(callback.bind(this));
+          superagent.get('/src/json/page' + pid + '.json').end(callback.bind(this));
+        }
       },
       _setPage: function (e) {
         e.preventDefault();
