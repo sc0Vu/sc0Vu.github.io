@@ -76,7 +76,7 @@
 }, {
 	"M" : {
 		"class" : {
-		    "S" : "works blue"
+		    "S" : "works yellow"
 		},
 		"content" : {
 		    "S" : "Yii extension 實踐 google chart 功能"
@@ -87,5 +87,19 @@
 		"title" : {
 		    "S" : "yii-gchart" 
 		}
-	}  
+	},
+	"M" : {
+		"class" : {
+		    "S" : "works blue"
+		},
+		"content" : {
+		    "S" : "A simple blog using backend and frontend framework: lumen, vue."
+		},
+		"link" : {
+		    "S" : "https://github.com/sc0Vu/lumtify"
+		},
+		"title" : {
+		    "S" : "lumtify" 
+		}
+	}
 }]
