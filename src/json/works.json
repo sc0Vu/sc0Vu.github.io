@@ -87,7 +87,8 @@
 		"title" : {
 		    "S" : "yii-gchart" 
 		}
-	},
+	}
+}, {
 	"M" : {
 		"class" : {
 		    "S" : "works blue"
