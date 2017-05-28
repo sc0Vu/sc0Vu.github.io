@@ -103,4 +103,19 @@
 		    "S" : "lumtify" 
 		}
 	}
+}, {
+	"M" : {
+		"class" : {
+		    "S" : "works red"
+		},
+		"content" : {
+		    "S" : "The lumen/laravel api response wrapper for rybakit/msgpack."
+		},
+		"link" : {
+		    "S" : "https://packagist.org/packages/guancheng/msgpack"
+		},
+		"title" : {
+		    "S" : "msgpack" 
+		}
+	}
 }]
