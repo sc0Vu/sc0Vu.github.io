@@ -49,13 +49,13 @@
 		    "S" : "works orange"
 		}, 
 		"content" : {
-		    "S" : "使用animation api 及物件導向設計達成跑馬燈效果(pure JS)"
+		    "S" : "協助台灣作業研究學會網站雲端架構規劃及建置, 使用AWS雲端CDN及S3放置網站"
 		}, 
 		"link" : {
-		    "S" : "https://github.com/sc0Vu/marquee"
+		    "S" : "https://www.orstw.org.tw/"
 		}, 
 		"title" : {
-		    "S" : "marquee js"
+		    "S" : "台灣作業研究學會 網站建置"
 		}
 	}
 }, {
@@ -116,6 +116,21 @@
 		},
 		"title" : {
 		    "S" : "msgpack" 
+		}
+	}
+}, {
+	"M" : {
+		"class" : {
+		    "S" : "works purple"
+		}, 
+		"content" : {
+		    "S" : "使用animation api 及物件導向設計達成跑馬燈效果(pure JS)"
+		}, 
+		"link" : {
+		    "S" : "https://github.com/sc0Vu/marquee"
+		}, 
+		"title" : {
+		    "S" : "marquee js"
 		}
 	}
 }]
