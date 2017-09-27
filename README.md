@@ -16,8 +16,10 @@ In this website, I use worker to fetch the resource and localStorage to remember
 
 Maybe I will use another web api future.
 
+```
 |-------|      |------|
 |       |      |      |
 | worker|  ->  | DATA |
 |       |      |      |
 |-------|      |------|
+```
