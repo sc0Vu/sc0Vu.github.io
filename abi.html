@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta name="language" content="zh_TW">
+    <meta name="robots" content="noarchive">
+    <meta name="geo.country" content="tw">
+    <meta name="author" content="Petar Lai">
+    <link rel="icon" type="png" src="/src/img/favicon.png">
+
+    <title>Ethereum ABI Encoder</title>
+    <meta name="description" content="Ethereum ABI Encoder">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css" integrity="sha256-WLKGWSIJYerRN8tbNGtXWVYnUM5wMJTXD8eG4NtGcDM=" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/8.0.2/bignumber.min.js" integrity="sha512-7UzDjRNKHpQnkh1Wf1l6i/OPINS9P2DDzTwQNX79JxfbInCXGpgI1RPb3ZD+uTP3O5X7Ke4e0+cxt2TxV7n0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="js/js-keccak-tiny.js"></script>
+  </head>
+  <body>
+    <section class="hero is-medium is-primary is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Ethereum ABI Encoder
+          </h1>
+          <h2 class="subtitle">
+            Why should I use Ethereum ABI Encoder?<br />
+            In EVM layer, every smart contract call/transaction is related to ABI. You have to put the call data in rpc payload.<br />
+            Tired to prepare call data when develop? Try this!<br />
+            Keccak tiny: <a href="https://github.com/sc0vu/js-keccak-tiny">https://github.com/sc0vu/js-keccak-tiny</a>
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h1 class="title">Try it!</h1>
+        <h2 class="subtitle">
+          Choose famous abi and enter the parameters.
+        </h2>
+
+        <div class="field">
+          <label class="label">ABI</label>
+          <div class="control">
+            <div class="select">
+              <select id="abi-select">
+                <option value="0">Select abi</option>
+                <option value="1">ERC20</option>
+                <option value="2">ERC721</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">ABI function</label>
+          <div class="control">
+            <div class="select">
+              <select id="abi-function" disabled>
+                <option value="0">Select abi function</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Parameters (separate by <code>return</code>)</label>
+          <div class="control">
+            <textarea id="abi-parameters" class="textarea has-fixed-size" placeholder="parameters"></textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Encode</label>
+          <div class="control">
+            <textarea id="abi-res" class="textarea has-fixed-size" placeholder="abi encode result"></textarea>
+          </div>
+        </div>
+
+        <div class="field is-grouped">
+          <div class="control">
+            <button id="abi-btn" class="is-primary button">Encode</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer m-4">
+      <div class="container">
+        <p>Made with <span class="bd-emoji">❤️</span> by <strong><a href="https://medium.com/@sc0vu" target="_blank">Peter Lai</a></strong></p>
+        <p>CSS framework: <strong><a href="http://bulma.io/" target="_blank">bulma</a></strong></p>
+      </div>
+    </footer>
+  </body>
+  <script>
+    (function () {
+      KECCAK()
+      .then((kt) => {
+        const allowedABIPath = {
+          '1': '/abi/ERC20.json',
+          '2': '/abi/ERC721.json'
+        }
+        const cachedABI = {}
+        let sel = document.getElementById('abi-select')
+        let fel = document.getElementById('abi-function')
+        let pel = document.getElementById('abi-parameters')
+        let rel = document.getElementById('abi-res')
+        let btn = document.getElementById('abi-btn')
+        let currentAbi = undefined
+        let currentFunc = undefined
+
+        sel.addEventListener('change', async (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          sel.disabled = true
+          const s = e.target.value
+          let abi = cachedABI[s]
+          if (abi !== undefined) {
+            sel.disabled = true
+            fel.disabled = true
+            currentAbi = undefined
+            return
+          }
+          const abiPath = allowedABIPath[s]
+          if (typeof abiPath !== 'string') {
+            sel.disabled = true
+            fel.disabled = true
+            currentAbi = undefined
+            return
+          }
+          const res = await fetch(abiPath)
+          abi = await res.json()
+          cachedABI[s] = abi
+          currentAbi = abi
+          const contractName = abi.contractName ? abi.contractName : abiPath
+          const funcs = abi.abi.filter(function (a) {
+            return a.type === 'function'
+          })
+          for (let i=0; i<funcs.length; i++) {
+            let oel = document.createElement('option')
+            const func = funcs[i]
+            const inputs = func.inputs.map(function (input) {
+              return input.type
+            })
+            oel.value = i
+            oel.textContent = func.name + '(' + inputs.join(',') + ')'
+            fel.appendChild(oel)
+          }
+          sel.disabled = false
+          fel.disabled = false
+        })
+
+        fel.addEventListener('change', async (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          if (currentAbi === undefined) {
+            currentFunc = undefined
+            return
+          }
+          const s = e.target.value
+          const funcs = currentAbi.abi.filter(function (a) {
+            return a.type === 'function'
+          })
+          const func = funcs[s]
+          if (func === undefined) {
+            currentFunc = undefined
+            return
+          }
+          currentFunc = func
+        })
+        btn.addEventListener('click', (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          if (currentFunc === undefined) {
+            return
+          }
+          if (currentFunc.inputs <= 0) {
+            const funcSig = kt.keccak256(currentFunc.name + '()').toString('hex').substring(0,8)
+            rel.value = funcSig
+            return
+          }
+          const inputs = currentFunc.inputs.map(function (input) {
+            return input.type
+          })
+          let p = pel.value.split('\n')
+          if (p.length <= 0 || p.length !== inputs.length) {
+            if (!pel.classList.contains('is-danger')) {
+              pel.classList.add('is-danger')
+            }
+            return
+          }
+          if (pel.classList.contains('is-danger')) {
+            pel.classList.remove('is-danger')
+          }
+          p = p.map(function (pp) {
+            if (pp.substring(0, 2).toLowerCase() === '0x') {
+              return pp.substring(2)
+            }
+            return pp
+          })
+          let error = false
+          for (let i=0; i<inputs.length; i++) {
+            const input = inputs[i]
+            switch (input) {
+              case 'address':
+                if (!/^[a-f0-9]{40}$/i.test(p[i])) {
+                  error = true
+                } else {
+                  p[i] = p[i].padStart(64, '0')
+                }
+                break
+              case 'uint256':
+                if (!/^[\d]+$/.test(p[i])) {
+                  error = true
+                } else {
+                  const j = new BigNumber(p[i])
+                  p[i] = j.toString(16).padStart(64, '0')
+                }
+                break
+            }
+            if (error) {
+              if (!pel.classList.contains('is-danger')) {
+                pel.classList.add('is-danger')
+              }
+              return
+            }
+          }
+          if (pel.classList.contains('is-danger')) {
+            pel.classList.remove('is-danger')
+          }
+          const funcSig = kt.keccak256(currentFunc.name + '(' + inputs.join(',') + ')').toString('hex').substring(0,8)
+          rel.value = funcSig + p.join('')
+        })
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+    })()
+  </script>
+</html>
