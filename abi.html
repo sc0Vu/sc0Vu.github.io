@@ -176,8 +176,8 @@
             return
           }
           if (currentFunc.inputs <= 0) {
-            const funcSig = kt.keccak256(currentFunc.name + '()').toString('hex').substring(0,8)
-            rel.value = funcSig
+            const funcSig = kt.keccak256(currentFunc.name + '()').toString('hex').substring(0, 8)
+            rel.value = '0x' + funcSig
             return
           }
           const inputs = currentFunc.inputs.map(function (input) {
@@ -229,8 +229,8 @@
           if (pel.classList.contains('is-danger')) {
             pel.classList.remove('is-danger')
           }
-          const funcSig = kt.keccak256(currentFunc.name + '(' + inputs.join(',') + ')').toString('hex').substring(0,8)
-          rel.value = funcSig + p.join('')
+          const funcSig = kt.keccak256(currentFunc.name + '(' + inputs.join(',') + ')').toString('hex').substring(0, 8)
+          rel.value = '0x' + funcSig + p.join('')
         })
       })
       .catch((err) => {
