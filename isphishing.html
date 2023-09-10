@@ -9,8 +9,8 @@
     <meta name="author" content="Petar Lai">
     <link rel="icon" type="png" src="/src/img/favicon.png">
 
-    <title>Ethereum ABI Encoder</title>
-    <meta name="description" content="Ethereum ABI Encoder">
+    <title>Is Phishing</title>
+    <meta name="description" content="Is Phishing">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css" integrity="sha256-WLKGWSIJYerRN8tbNGtXWVYnUM5wMJTXD8eG4NtGcDM=" crossorigin="anonymous">
   </head>
@@ -35,10 +35,12 @@
           Type domain name and check.
         </h2>
 
+        <div id="check-notification" class="notification is-hidden"></div>
+
         <div class="field">
           <label class="label">Domain name</label>
           <div class="control">
-            <input type="text" id="check-domain" class="" placeholder="domain name" />
+            <input type="text" id="check-domain" class="input" placeholder="domain name" />
           </div>
         </div>
 
@@ -60,15 +62,69 @@
   <script>
     (function () {
       fetch('https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/main/src/config.json')
-      .then((config) => {
-        const fuzzylist = config.fuzzylist || []
-        const whitelist = config.whitelist || []
-        const blacklist = config.blacklist || []
-        console.log(fuzzylist, whitelist, blacklist)
+      .then(async (config) => {
+        const rawConfig = await config.json()
+        const fuzzylist = rawConfig.fuzzylist || []
+        const whitelist = rawConfig.whitelist || []
+        const blacklist = rawConfig.blacklist || []
+        let pnt = document.getElementById('check-notification')
         let pel = document.getElementById('check-domain')
         let btn = document.getElementById('check-btn')
+        const addClass = function (el, className) {
+          if (el && el.classList !== undefined) {
+            if (!el.classList.contains(className)) {
+              el.classList.add(className)
+            }
+          }
+        }
+        const removeClass = function (el, className) {
+          if (el && el.classList !== undefined) {
+            if (el.classList.contains(className)) {
+              el.classList.remove(className)
+            }
+          }
+        }
         // TODO: verify whether other website fetch resouces from the phishing domain
+        // TODO: check url more strictly
         btn.addEventListener('click', (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          let p = pel.value
+          if (p.length <= 0) {
+            addClass(pel, 'is-danger')
+            removeClass(pnt, 'is-hidden')
+            addClass(pnt, 'is-danger')
+            pnt.textContent = 'Please enter url'
+            return
+          }
+          p = p.toLowerCase()
+          if (/https?:?\/?\/?/.test(p)) {
+            addClass(pel, 'is-danger')
+            removeClass(pnt, 'is-hidden')
+            addClass(pnt, 'is-danger')
+            pnt.textContent = 'Please enter url without http:// or https://'
+            return
+          }
+          if (whitelist.indexOf(p) >= 0) {
+            removeClass(pel, 'is-danger')
+            removeClass(pnt, 'is-danger')
+            removeClass(pnt, 'is-hidden')
+            addClass(pnt, 'is-primary')
+            pnt.textContent = 'Url is safe'
+            return
+          }
+          if (blacklist.indexOf(p) >= 0) {
+            addClass(pel, 'is-danger')
+            removeClass(pnt, 'is-hidden')
+            addClass(pnt, 'is-danger')
+            pnt.textContent = 'Url is not safe'
+            return
+          }
+          removeClass(pel, 'is-danger')
+          removeClass(pnt, 'is-hidden')
+          removeClass(pnt, 'is-danger')
+          addClass(pnt, 'is-primary')
+          pnt.textContent = 'Url is safe'
         })
       })
       .catch((err) => {
