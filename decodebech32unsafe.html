@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta name="language" content="zh_TW">
+    <meta name="robots" content="noarchive">
+    <meta name="geo.country" content="tw">
+    <meta name="author" content="Petar Lai">
+    <link rel="icon" type="png" src="/src/img/favicon.png">
+
+    <title>Decode Bitcoin bech32 unsafe</title>
+    <meta name="description" content="Decode Bitcoin bech32 unsafe">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css" integrity="sha256-WLKGWSIJYerRN8tbNGtXWVYnUM5wMJTXD8eG4NtGcDM=" crossorigin="anonymous">
+  </head>
+  <body>
+    <section class="hero is-medium is-dark is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Decode Bitcoin bech32 unsafe
+          </h1>
+          <h2 class="subtitle">
+            Decode Bitcoin bech32 to hex<br />
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h1 class="title">Try it!</h1>
+
+        <div class="field">
+          <label class="label">Message</label>
+          <div class="control">
+            <textarea id="msg" class="textarea has-fixed-size" placeholder="message"></textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Decoded</label>
+          <div class="control">
+            <textarea id="decoded-res" class="textarea has-fixed-size" placeholder="decoded result"></textarea>
+          </div>
+        </div>
+
+        <div class="field is-grouped">
+          <div class="control">
+            <button id="decode-btn" class="is-primary button">decode!</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer m-4">
+      <div class="container">
+        <p>Made with <span class="bd-emoji">❤️</span> by <strong><a href="https://medium.com/@sc0vu" target="_blank">Peter Lai</a></strong></p>
+        <p>CSS framework: <strong><a href="http://bulma.io/" target="_blank">bulma</a></strong></p>
+      </div>
+    </footer>
+  </body>
+  <script src="js/decode-bech32-unsafe.js"></script>
+  <script>
+    (function () {
+      let mel = document.getElementById('msg')
+      let rel = document.getElementById('decoded-res')
+      let btn = document.getElementById('decode-btn')
+
+      function binaryToHex(array) {
+        return Array.from(array)
+          .map(byte => byte.toString(16).padStart(2, '0'))
+          .join('')
+      }
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        const m = mel.value.toString()
+        if (m.length <= 0) {
+          if (!mel.classList.contains('is-danger')) {
+            mel.classList.add('is-danger')
+          }
+          return
+        }
+        if (mel.classList.contains('is-danger')) {
+          mel.classList.remove('is-danger')
+        }
+        const t0 = performance.now()
+        const decoded = binaryToHex(decodeBech32Unsafe(m))
+        const t1 = performance.now()
+        rel.value = decoded
+        console.log(`Decode bech32 message takes ${t1-t0} milliseconds.`)
+      })
+    })()
+  </script>
+</html>
