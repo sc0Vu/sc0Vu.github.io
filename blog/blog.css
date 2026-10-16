@@ -243,3 +243,11 @@
     font-size: 0.875rem;
     color: var(--muted, #94a3b8);
 }
+/* Article diagrams and long-form lists */
+.article-content figure { margin: 2rem 0 2.5rem; }
+.article-content figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.article-content figcaption { margin-top: .65rem; font-size: .86rem; line-height: 1.5; color: var(--muted); }
+.article-content ul, .article-content ol { padding-left: 1.6rem; margin: 0 0 1.7rem; }
+.article-content li { padding-left: .2rem; margin-bottom: .55rem; }
+.article-content pre { white-space: pre; }
+.article-content pre code { font-size: .9em; }

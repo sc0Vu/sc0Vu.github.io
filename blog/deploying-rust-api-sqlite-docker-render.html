@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Kuan Cheng Lai" />
+    <meta name="description" content="How I deployed PrijsVink’s Rust API with SQLite, Docker, GitHub Container Registry, and Render." />
+    <meta name="theme-color" content="#0b1220" />
+    <link rel="canonical" href="https://sc0vu.github.io/blog/deploying-rust-api-sqlite-docker-render.html" />
+    <title>Deploying My Rust API with SQLite, Docker, and Render — Kuan Cheng Lai</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="blog.css" />
+</head>
+
+<body><a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+        <div class="shell nav-wrap"><a class="brand" href="../index.html" aria-label="Kuan Cheng Lai home">KCL</a>
+            <nav class="nav" aria-label="Primary navigation"><a href="../index.html#work">Work</a><a
+                    href="../index.html#projects">Projects</a><a href="../index.html#experience">Experience</a><a
+                    href="../index.html#lab">Lab</a><a href="./" aria-current="page">Blog</a></nav>
+            <div class="nav-actions"><a href="https://github.com/sc0vu" target="_blank" rel="noreferrer">GitHub</a><a
+                    href="https://www.linkedin.com/in/peter-lai-5a11b967/" target="_blank" rel="noreferrer">LinkedIn</a>
+            </div>
+        </div>
+    </header>
+    <main id="main">
+        <section class="article-hero">
+            <div class="shell article-shell"><a class="back-link" href="./">← All articles</a>
+                <h1>Deploying My Rust API with SQLite, Docker, and Render</h1>
+                <p class="article-summary">How I deployed a lightweight supermarket price comparison API without managing a VPS or a separate database server.</p>
+                <time class="article-date" datetime="2026-10-16">October 16, 2026</time>
+            </div>
+        </section>
+        <section class="article-section">
+            <div class="shell article-shell">
+                <article class="article-content">
+<h2>Introduction</h2>
+<p>I recently built a side project called <a href="https://prijsvink.xyz/">PrijsVink</a>, which collects and compares supermarket prices across the Netherlands.</p>
+<p>The tech stack is fairly simple:</p>
+<ul><li><strong>React</strong> for the frontend, hosted on GitHub Pages</li><li><strong>Python</strong> for scraping supermarket product information and prices</li><li><strong>Rust (Axum)</strong> for the API</li><li><strong>SQLite</strong> for storing product and price data</li></ul>
+<p>My goal was to keep the architecture as simple as possible. Since this is a personal project, I didn’t want to spend too much time or money maintaining infrastructure.</p>
+<p>Initially, I used Cloudflare Tunnel to expose my locally hosted API to the internet. It worked well for development, but there was one obvious limitation: my API was only available when my computer was running and the tunnel was active.</p>
+<p>I needed somewhere to host the API without keeping my laptop on all day.</p>
+<p>That’s when I came across <a href="https://render.com/">Render</a>, a cloud platform that supports deploying web services from Docker images.</p>
+<p>In this article, I’ll walk through how I deployed my Rust API with SQLite and Docker, why I chose this architecture, and some of the problems I encountered along the way.</p>
+<h2>Prerequisites</h2>
+<p>Before getting started, you’ll need:</p>
+<ul><li><strong>GitHub:</strong> To store the Docker image using GitHub Container Registry (GHCR)</li><li><strong>Render:</strong> To host the API service</li><li><strong>Docker CLI and Colima:</strong> To build Docker images locally on macOS</li></ul>
+<p>You’ll also need an existing Rust API and a SQLite database file.</p>
+<h2>Choosing a Deployment Approach</h2>
+<p>Since my application already used SQLite, I wanted to avoid migrating to MySQL or PostgreSQL just for deployment.</p>
+<p>Initially, I considered renting a VPS from DigitalOcean and managing the infrastructure with Terraform.</p>
+<p>I’d used Terraform before to deploy several KPI nodes, so this approach was familiar to me. However, it would introduce additional costs and operational overhead.</p>
+<p>For a personal project, I didn’t think that was necessary.</p>
+<p>Then I discovered Render.</p>
+<p>I started wondering: <strong>why not package both the SQLite database and Rust API into a single Docker image?</strong></p>
+<p>SQLite is an embedded database, so it doesn’t require a separate database server. My production API only needs to read product and price data, which makes this approach particularly suitable.</p>
+<p>The architecture is straightforward:</p>
+<figure><img src="prijsvink-architecture.png" alt="PrijsVink architecture: Python scraper updates SQLite, Docker packages the database with the Rust API, the private image is pushed to GitHub Container Registry and deployed to Render, and the React frontend on GitHub Pages sends HTTPS requests to the API." loading="lazy" width="1728" height="864"><figcaption>PrijsVink architecture and deployment flow. The React frontend runs independently on GitHub Pages.</figcaption></figure>
+<p>The scraper updates the database separately. I then package a database snapshot into the Docker image and deploy it together with the API.</p>
+<p>This approach has several advantages:</p>
+<ul><li>No separate database server to manage</li><li>No persistent disk required for the deployed read-only snapshot</li><li>Predictable deployment artifacts</li><li>Minimal infrastructure costs</li></ul>
+<p>Of course, there are trade-offs.</p>
+<p>Every time I want to publish updated database content, I need to build and deploy a new image. Changes made to the database inside the running container wouldn’t be durable.</p>
+<p>For a read-only API serving periodically updated data, I think that’s a reasonable compromise.</p>
+<h2>Building Docker Images Without Docker Desktop</h2>
+<p>One thing that surprised me during this process was that I didn’t need Docker Desktop on my Mac.</p>
+<p>I’d used Docker Desktop before and remembered it consuming a noticeable amount of CPU and memory.</p>
+<p>This time, I decided to try <a href="https://github.com/abiosoft/colima">Colima</a>, which provides a lightweight Linux virtual machine for running containers on macOS.</p>
+<p>After installing Colima and the Docker CLI, I could start the container runtime with:</p>
+<pre><code>colima start</code></pre>
+<p>Then I could use familiar Docker commands without installing Docker Desktop.</p>
+<p>Since my deployment environment runs Linux containers, I built the image for the <code>linux/amd64</code> platform:</p>
+<pre><code>docker buildx build \
+  --platform linux/amd64 \
+  -t ghcr.io/&lt;username&gt;/supershoping-api:latest \
+  --push .</code></pre>
+<p>This command builds the image and pushes it directly to GitHub Container Registry.</p>
+<p>Building for the correct platform is especially important when developing on an Apple Silicon Mac, where the local architecture may be ARM64.</p>
+<h2>Packaging SQLite with the Rust API</h2>
+<p>One of the main decisions was how to handle the SQLite database.</p>
+<p>Instead of connecting to an external database service, I included a snapshot of the database in the Docker image.</p>
+<p>At runtime, the Rust API opens the database in read-only mode.</p>
+<p>This makes the application portable: the same image can run locally or on a compatible container hosting platform.</p>
+<p>It also means that each deployment contains a specific version of the application and its data.</p>
+<p>There is one important limitation, though. SQLite is stored as a file inside the container, and Render’s container filesystem isn’t suitable for storing persistent application changes.</p>
+<p>That’s why I treat the database as an immutable snapshot rather than a writable production database.</p>
+<p>If I eventually need real-time database updates, I’ll reconsider this architecture and possibly move to a managed database or persistent storage.</p>
+<p>For now, simplicity matters more.</p>
+<h2>Publishing a Private Docker Image to GitHub</h2>
+<p>Once the image was ready, the next step was publishing it.</p>
+<p>I decided to use <strong>GitHub Container Registry (GHCR)</strong> because my project was already hosted on GitHub.</p>
+<p>First, I authenticated locally using a GitHub token with the required package permissions:</p>
+<pre><code>echo "$GHCR_TOKEN" | docker login ghcr.io \
+  -u &lt;username&gt; \
+  --password-stdin</code></pre>
+<p>Then I built and pushed the image using Docker Buildx.</p>
+<p>I chose to keep the container image private because it contains the SQLite database snapshot.</p>
+<p>Although my API exposes product and price information publicly, I didn’t necessarily want to distribute the entire database file as a downloadable container image.</p>
+<p>A private image also requires additional configuration in Render, since the hosting platform needs permission to pull it.</p>
+<h2>Deploying the Container to Render</h2>
+<p>The actual deployment process was surprisingly straightforward.</p>
+<p>In Render, I created a new Web Service and selected the option to deploy an existing container image.</p>
+<p>I provided the GHCR image URL:</p>
+<pre><code>ghcr.io/&lt;username&gt;/supershoping-api:latest</code></pre>
+<p>Since the image was private, I configured registry credentials in Render.</p>
+<p>I also configured the environment variables required by my API, including the database location.</p>
+<p>After deploying the image, Render started the container and exposed the API through a public HTTPS endpoint.</p>
+<p>I then connected my custom domain, <code>api.prijsvink.xyz</code>, to the Render service.</p>
+<p>The frontend remained on GitHub Pages, so I didn’t need to change my React hosting setup.</p>
+<p>One thing to note is that deploying from a container registry doesn’t automatically guarantee that Render will redeploy whenever a new image is pushed. In my current workflow, I manually trigger the deployment after publishing a new image.</p>
+<p>For a side project, this is manageable. In the future, I may automate the process using GitHub Actions and a deployment trigger.</p>
+<h2>Debugging a SQLite Connection Error</h2>
+<p>Not everything worked on the first attempt.</p>
+<p>After deploying the container, I encountered an error when the API tried to open the SQLite database.</p>
+<p>Initially, I used a database URL in a format commonly supported by SQLite clients, but my Rust application uses <code>r2d2_sqlite</code> and <code>rusqlite</code>.</p>
+<p>The connection manager expects a filesystem path rather than a SQLx-style connection string.</p>
+<p>I updated the configuration to use a regular filesystem path and opened the database in read-only mode:</p>
+<pre><code>use rusqlite::OpenFlags;
+use r2d2_sqlite::SqliteConnectionManager;
+
+let manager = SqliteConnectionManager::file(database_path)
+    .with_flags(OpenFlags::SQLITE_OPEN_READ_ONLY);</code></pre>
+<p>This fixed the connection issue.</p>
+<p>It was a useful reminder that even when two Rust libraries work with the same database, their connection configuration formats may differ.</p>
+<p>I also learned to verify that the database file actually exists inside the final Docker image, rather than assuming that a successful image build means every runtime dependency is present.</p>
+<h2>Understanding Render’s Free Tier</h2>
+<p>Render’s free tier is useful for side projects, but it comes with limitations.</p>
+<p>One important behavior is that free web services spin down after approximately 15 minutes without incoming traffic.</p>
+<p>When a new request arrives, Render starts the service again. This can introduce a cold start, meaning the first request may take longer than usual.</p>
+<p>For now, I’m willing to accept occasional cold starts.</p>
+<p>If API response time becomes more important, upgrading the hosting plan would be a more reliable solution.</p>
+<h2>What I Learned</h2>
+<p>This project reminded me that deploying an application doesn’t always require a complicated infrastructure setup.</p>
+<p>I initially considered a VPS, Terraform, and possibly migrating away from SQLite.</p>
+<p>In the end, I deployed my existing Rust API and SQLite database as a single Docker image.</p>
+<p>The most useful lessons were:</p>
+<ol><li><strong>Choose infrastructure based on actual requirements.</strong> A personal project doesn’t necessarily need a managed database or Kubernetes cluster.</li><li><strong>SQLite can work well in production for read-only workloads.</strong> Packaging a database snapshot into a container is a practical option when data updates don’t need to happen inside the deployed service.</li><li><strong>Docker Desktop isn’t required on macOS.</strong> Colima provides an alternative for building and running Linux containers.</li><li><strong>Pay attention to library-specific configuration.</strong> My SQLite connection error came from using a URL format that didn’t match the Rust database library.</li><li><strong>Understand the limitations of free hosting.</strong> Cold starts and manual deployments are acceptable trade-offs for some side projects, but not every production application.</li></ol>
+<h2>What’s Next?</h2>
+<p>Next, I’d like to automate Docker builds and deployments using GitHub Actions and explore ways to reduce the Docker image size.</p>
+<p>For now, I’m happy with this lightweight setup.</p>
+<p>You can check out the project at <a href="https://prijsvink.xyz/">prijsvink.xyz</a>.</p>
+                </article>
+                <div class="article-end">
+                    <a class="button secondary" href="./">← Back to blog</a>
+                    <a class="button secondary" href="../index.html#projects">Explore projects ↗</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer">
+        <div class="shell footer-inner">
+            <p>© 2026 Kuan Cheng Lai</p>
+            <p>Built as a small, fast static site on GitHub Pages.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
